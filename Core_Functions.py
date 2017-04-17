@@ -10,9 +10,9 @@ module2 = True  # Convert images between different color spaces
 
 # Load a test image with three different color formats
 # Test image is 533 x 400
-#inputFile = "input/face0.jpg"
-#inputFile = "input/face_large.jpg"
-inputFile = "input/face_large.png"
+#inputFile = "input/face0.jpg"  # 533 x 400 pixels
+#inputFile = "input/face_large.jpg" # 3500 x 2789 pixels
+inputFile = "input/face_large.png"  # 3500 x 2789 pixels
 
 img_color = cv.imread(inputFile,1) # Color, but discard transparency (default)
 img_gray = cv.imread(inputFile,0) # Grayscale
@@ -79,7 +79,6 @@ if module1 == True:
     # Two other ways to get the correct color
     img_color_rgb_2 = img_color[:, :, ::-1] # Uses numpy indexing
     img_color_rgb_3 = cv.cvtColor(img_color, cv.COLOR_BGR2RGB)
-
 
 # Module 2: Convert images to different color spaces
 if module2 == True:
