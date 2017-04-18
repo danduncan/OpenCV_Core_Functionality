@@ -122,7 +122,8 @@ module0 = False  # Video file playback
 module1 = False  # Video file playback w/ FPS tracking
 module2 = False  # Multithreaded video file playback
 module3 = False  # Webcam playback
-module4 = True   # Multithreaded webcam playback
+module4 = False  # Multithreaded webcam playback
+module5 = True   # Save webcam video to file
 
 inputFile = "input/dachie.mov"
 
@@ -162,7 +163,7 @@ if module0 == True:
 
 # Module 1: Single-Threaded with FPS counting and text added
 # Achieves framerate of 7.59 fps
-if module1 == True:
+if module1:
     stream = cv.VideoCapture(inputFile)
     fps = FPS().start() # Object that counts the frame rate
 
@@ -206,7 +207,7 @@ if module1 == True:
 # Improves to > 12 fps if a large enough buffer is used
 # Bottleneck for speed is reading and decoding frames
 # May get further improvement by having many concurrent threads read frames
-if module2 == True:
+if module2:
     fvs = FileVideoStream(inputFile,queueSize=512).start()
     time.sleep(3.0)  # Wait for fvs to initialize
     fps = FPS().start()  # start the FPS timer
@@ -255,7 +256,7 @@ if module2 == True:
 
 
 # Single-threaded webcam playback
-if module3 == True:
+if module3:
     # Argument 0 accesses webcam
     cap = cv.VideoCapture(0)
     fps = FPS().start()  # start the FPS timer
@@ -294,7 +295,7 @@ if module3 == True:
 
 # Multi-threaded webcam playback
 # Achieves framerate of 14 fps
-if module4 == True:
+if module4:
     wvs = WebcamVideoStream().start()
     fps = FPS().start()
 
@@ -317,6 +318,57 @@ if module4 == True:
     cv.destroyAllWindows()
     cv.waitKey(1)
     wvs.stop()
+
+# Save webcam video to file
+# Uses multithreaded webcam playback
+# Video writing in OpenCV is platform-dependent. Running this code
+# on another platform may require trial-and-error with different codecs
+# and file extensions.
+# For Mac OSX, MJPG + .avi works
+if module5:
+    # Define the codec and create VideoWriter object
+
+    # Popular codec options: H264, MJPG, XVID, DIVX
+    # List of all codecs: http://www.fourcc.org/codecs.php
+    fourcc = cv.VideoWriter_fourcc(*'MJPG')
+
+    # File extensions options: .avi, .mp4, .mov
+    out = cv.VideoWriter('output/output.avi', fourcc, 10.0, (1280, 720))
+
+    # Create webcam input stream
+    wvs = WebcamVideoStream().start()
+    fps = FPS().start()
+
+    while True:
+        # Grab most recent frame
+        frame = wvs.read()
+
+        # Display frame to screen
+        cv.imshow('frame', frame)
+        fps.update()
+
+        # Write mirror-imaged frame to output stream
+        frameOut = cv.flip(frame,0) # Zero means flip horizontally
+        out.write(frame)
+
+        if cv.waitKey(1) & 0xFF == ord('q'):
+            print("Q pressed. Quitting.")
+            break
+
+    # Display FPS information
+    fps.stop()
+    print("Elapsed time: {:.2f}".format(fps.elapsed()))
+    print("Approx. FPS: {:.2f}".format(fps.fps()))
+
+    # Write video file
+    out.release() # Finalize write to file
+    print("Video file written.")
+
+    # Clean up
+    cv.destroyAllWindows()
+    cv.waitKey(1)
+    wvs.stop()
+
 
 # Finish
 print("All done!")
