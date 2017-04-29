@@ -3,16 +3,25 @@ import numpy as np
 from matplotlib import pyplot as plt
 import time
 
+# Timing metrics
+#               0.2 MPixels   10 MPixels     Filetype
+# BGR2LAB       1.2 ms        17.6 ms        JPG
+# BGR2HSV       1.4 ms        28.3 ms        JPG
+# BGR2HSV_FULL  1.1 ms        25.4 ms        JPG
+# BGR2RGB       0.6 ms        7.9 ms         JPG
+# BGR2GRAY      0.2 ms        7.0 ms         JPG
+# BGR2YCrCb     0.4 ms        18.6 ms        JPG
+# BGR2XYZ       0.4 ms        20.2 ms        JPG
+
 # Select modules to enable
 module0 = False  # Display images using opencv
 module1 = False  # Display images using matplotlib
 module2 = True  # Convert images between different color spaces
 
 # Load a test image with three different color formats
-# Test image is 533 x 400
-#inputFile = "input/face0.jpg"  # 533 x 400 pixels
+inputFile = "input/face0.jpg"  # 533 x 400 pixels
 #inputFile = "input/face_large.jpg" # 3500 x 2789 pixels
-inputFile = "input/face_large.png"  # 3500 x 2789 pixels
+#inputFile = "input/face_large.png"  # 3500 x 2789 pixels
 
 img_color = cv.imread(inputFile,1) # Color, but discard transparency (default)
 img_gray = cv.imread(inputFile,0) # Grayscale
@@ -93,12 +102,13 @@ if module2 == True:
     # COLOR_BGR2LAB, COLOR_BGR2Lab  <-- These are equivalent
     # COLOR_BGR2XYZ
     # COLOR_BGR2YCR_CB, COLOR_BGR2YCrCb <-- These are equivalent
-    flags = ["COLOR_BGR2GRAY",
+    flags = ["COLOR_BGR2RGB",
+             "COLOR_BGR2GRAY",
+             "COLOR_BGR2LAB",
              "COLOR_BGR2HSV",
              "COLOR_BGR2HSV_FULL",
-             "COLOR_BGR2LAB",
-             "COLOR_BGR2XYZ",
-             "COLOR_BGR2YCrCb"
+             "COLOR_BGR2YCrCb",
+             "COLOR_BGR2XYZ"
              ]
 
     # Print image resolution
@@ -115,12 +125,14 @@ if module2 == True:
 
     # Display image and check display time
     # Note that cv.imshow only accepts images in BGR format
-    t0 = time.time()
-    cv.imshow('Color',img_color)
-    tdisp = time.time() - t0
-    print("Display time:\t%.3f ms" % (1000*tdisp))
-    cv.waitKey(0) # Wait for user to press any key before continuing
-    cv.destroyAllWindows()
-    cv.waitKey(1) # Required extra line for cv to work on Mac
+    showImage = False
+    if showImage:
+        t0 = time.time()
+        cv.imshow('Color',img_color)
+        tdisp = time.time() - t0
+        print("Display time:\t%.3f ms" % (1000*tdisp))
+        cv.waitKey(0) # Wait for user to press any key before continuing
+        cv.destroyAllWindows()
+        cv.waitKey(1) # Required extra line for cv to work on Mac
 
 print("\nAll done!")
