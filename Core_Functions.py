@@ -33,7 +33,6 @@ module2 = True  # Convert images between different color spaces
 # Load a test image with three different color formats
 inputFile = "input/face0.jpg"  # 533 x 400 pixels
 #inputFile = "input/face_large.jpg" # 3500 x 2789 pixels
-#inputFile = "input/face_large.png"  # 3500 x 2789 pixels
 
 
 #--------------------------------------------------------------------
