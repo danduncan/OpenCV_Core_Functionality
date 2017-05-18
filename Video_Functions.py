@@ -1,12 +1,14 @@
-# Note: Multithreaded classes were borrowed from:
-# Video file playback:
-# http://www.pyimagesearch.com/2017/02/06/faster-video-file-fps-with-cv2-videocapture-and-opencv/
+#--------------------------------------------------------------------
+# Author: Dan Duncan
+# Date created: 4/20/2017
 #
-# Webcam:
-# http://www.pyimagesearch.com/2015/12/21/increasing-webcam-fps-with-python-and-opencv/
+# Note: Some of the ideas here are borrowed or inspired
+# from the PyImageSearch blog
 #
-# The imutils.video.* library also contains these classes and others
-# imutils can be installed with "pip install imutils"
+# The imutils.video.* library also contains classes similar
+# to these, although implementations may differ.
+#
+#--------------------------------------------------------------------
 
 import cv2 as cv
 import numpy as np
@@ -16,7 +18,9 @@ from threading import Thread
 from Queue import Queue
 import time
 
-# Create class for mulithreaded video streaming
+#--------------------------------------------------------------------
+# Create class for mulithreaded streaming of video from a file
+
 class FileVideoStream:
     def __init__(self, path, queueSize=256):
         # initialize the file video stream along with the boolean
@@ -77,6 +81,7 @@ class FileVideoStream:
         self.stream.release()
 
 
+#--------------------------------------------------------------------
 # Create class for multithreaded webcam streaming
 class WebcamVideoStream:
     def __init__(self, src=0):
@@ -116,6 +121,9 @@ class WebcamVideoStream:
         # indicate that the thread should be stopped
         self.stopped = True
 
+
+# --------------------------------------------------------------------
+# START SCRIPT
 
 # Select modules to run
 module0 = False  # Video file playback

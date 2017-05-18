@@ -1,3 +1,12 @@
+#--------------------------------------------------------------------
+# Author: Dan Duncan
+# Date created: 4/27/2017
+#
+# Note: This is intended as a test of the Canny edge detection
+# algorithm, and is based on an example from the PyImageSearch blog.
+#
+#--------------------------------------------------------------------
+
 # Take a photo of a thermostat and read the screen
 
 from imutils.perspective import four_point_transform

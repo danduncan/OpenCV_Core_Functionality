@@ -1,4 +1,13 @@
-# Take photo of document and return scanned document
+#--------------------------------------------------------------------
+# Author: Dan Duncan
+# Date created: 4/28/2017
+#
+# Takes photo of document and returns the scanned document
+#
+# Note: This is intended as a test of the image perspective
+# transformations, and is based on an example from PyImageSearch blog.
+#
+#--------------------------------------------------------------------
 
 from imutils.perspective import four_point_transform
 import imutils
@@ -6,6 +15,7 @@ from skimage.filters import threshold_adaptive
 import numpy as np
 import cv2 as cv
 
+#--------------------------------------------------------------------
 # HELPER FUNCTIONS
 
 # Quick image visualization
@@ -55,10 +65,14 @@ def side_by_side(image1,image2,barwidth=10):
     # Return the final image
     return output
 
+
+#--------------------------------------------------------------------
+# START SCRIPT
+# PART 1: Noise reduction and Canny edge detection
+
 input_path = "input/receipt.jpg"
 
-
-# load the image and compute the ratio of the old height
+# Load the image and compute the ratio of the old height
 # to the new height, clone it, and resize it
 # We do our edge detection on the resized image, but we
 # retain the ratio in order to do our extraction on the
@@ -68,7 +82,7 @@ ratio = image.shape[0] / 500.0
 orig = image.copy()
 image = imutils.resize(image, height=500)
 
-# convert the image to grayscale, blur it, and find edges
+# Convert the image to grayscale, blur it, and find edges
 # in the image
 # Blurring removes high frequency noise and aids contour detection
 # using the Canny edge detector
@@ -76,17 +90,17 @@ gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
 gray = cv.GaussianBlur(gray, (5, 5), 0)
 edged = cv.Canny(gray, 75, 200)
 
-# show the original image and the edge detected image
+# Show the original image and the edge detected image
 print "STEP 1: Edge Detection"
 output = side_by_side(orig,edged)
-#visualize(side_by_side(image,edged))
+visualize(side_by_side(image,edged))
 
-
-# PART 2:
-# Find the contours in the edged image
+#--------------------------------------------------------------------
+# PART 2: Find the contours in the edged image
 # Sort contours by descending size
 # The largest contour with exactly 4 edges is assumed to be the piece of paper
 # Retain only the 5 largest contours for checking
+
 cnts = cv.findContours(edged.copy(), cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)
 cnts = cnts[0] if imutils.is_cv2() else cnts[1]
 cnts = sorted(cnts, key=cv.contourArea, reverse=True)[:5]
@@ -106,10 +120,10 @@ for c in cnts:
 # show the contour (outline) of the piece of paper
 print "STEP 2: Find contours of paper"
 cv.drawContours(image, [screenCnt], -1, (0, 255, 0), 2)
-#visualize(image)
+visualize(image)
 output = side_by_side(output,image)
 
-
+#--------------------------------------------------------------------
 # PART 3: Transform Image
 # Apply the four point transform to obtain a top-down
 # view of the original image
@@ -119,16 +133,17 @@ output = side_by_side(output,image)
 # More documentation here:
 # www.pyimagesearch.com/2014/08/25/4-point-opencv-getperspective-transform-example/
 # www.pyimagesearch.com/2014/05/05/building-pokedex-python-opencv-perspective-warping-step-5-6/
+
 warped = four_point_transform(orig, screenCnt.reshape(4, 2) * ratio)
 
 # Convert the warped image to grayscale, then threshold it
-# to give it that 'black and white' paper effect
+# to enhance black/white contrast
 warped = cv.cvtColor(warped, cv.COLOR_BGR2GRAY)
 warped = threshold_adaptive(warped, 251, offset=10)
 warped = warped.astype("uint8") * 255
 
-# show the original and scanned images
+# Show the original and scanned images
 print "STEP 3: Apply perspective transform"
 output = side_by_side(output,warped)
 visualize(output)
-#visualize(side_by_side(orig,warped))
+visualize(side_by_side(orig,warped))

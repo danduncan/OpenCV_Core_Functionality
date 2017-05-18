@@ -1,17 +1,29 @@
+#--------------------------------------------------------------------
+# Author: Dan Duncan
+# Date created: 4/19/2017
+#
+# Test of the core functionalities of OpenCV on still images.
+# Includes file I/O, displaying images, and benchmarking of
+# color space transformations.
+#
+# Timing metrics
+#               0.2 MPixels   10 MPixels
+# BGR2LAB       1.2 ms        17.6 ms
+# BGR2HSV       1.4 ms        28.3 ms
+# BGR2HSV_FULL  1.1 ms        25.4 ms
+# BGR2RGB       0.6 ms        7.9 ms
+# BGR2GRAY      0.2 ms        7.0 ms
+# BGR2YCrCb     0.4 ms        18.6 ms
+# BGR2XYZ       0.4 ms        20.2 ms
+#
+#--------------------------------------------------------------------
+
 import cv2 as cv
-import numpy as np
 from matplotlib import pyplot as plt
 import time
 
-# Timing metrics
-#               0.2 MPixels   10 MPixels     Filetype
-# BGR2LAB       1.2 ms        17.6 ms        JPG
-# BGR2HSV       1.4 ms        28.3 ms        JPG
-# BGR2HSV_FULL  1.1 ms        25.4 ms        JPG
-# BGR2RGB       0.6 ms        7.9 ms         JPG
-# BGR2GRAY      0.2 ms        7.0 ms         JPG
-# BGR2YCrCb     0.4 ms        18.6 ms        JPG
-# BGR2XYZ       0.4 ms        20.2 ms        JPG
+#--------------------------------------------------------------------
+# USER OPTIONS:
 
 # Select modules to enable
 module0 = False  # Display images using opencv
@@ -22,6 +34,10 @@ module2 = True  # Convert images between different color spaces
 inputFile = "input/face0.jpg"  # 533 x 400 pixels
 #inputFile = "input/face_large.jpg" # 3500 x 2789 pixels
 #inputFile = "input/face_large.png"  # 3500 x 2789 pixels
+
+
+#--------------------------------------------------------------------
+# START SCRIPT
 
 img_color = cv.imread(inputFile,1) # Color, but discard transparency (default)
 img_gray = cv.imread(inputFile,0) # Grayscale
